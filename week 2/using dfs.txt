@@ -1,0 +1,50 @@
+from math import gcd
+
+def water_jug_dfs(m, n, d):
+    if d > max(m, n) or d % gcd(m, n) != 0:
+        print("Not possible")
+        return False
+
+    visited = set()
+    path = []
+
+    def dfs(x, y):
+        if (x, y) in visited:
+            return False
+
+        visited.add((x, y))
+        path.append((x, y))
+
+        if x == d or y == d:
+            print("Steps:")
+            for i, state in enumerate(path):
+                print(f"Step {i}: JugA={state[0]}, JugB={state[1]}")
+            return True
+
+        if dfs(m, y):
+            return True
+
+        if dfs(x, n):
+            return True
+
+        if dfs(0, y):
+            return True
+
+        if dfs(x, 0):
+            return True
+
+        transfer = min(x, n - y)
+        if dfs(x - transfer, y + transfer):
+            return True
+
+        transfer = min(y, m - x)
+        if dfs(x + transfer, y - transfer):
+            return True
+
+        path.pop()
+        return False
+
+    return dfs(0, 0)
+
+
+water_jug_dfs(3, 5, 4)

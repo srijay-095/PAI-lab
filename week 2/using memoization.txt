@@ -1,0 +1,54 @@
+from math import gcd
+
+def water_jug_memo(m, n, d):
+    if d > max(m, n) or d % gcd(m, n) != 0:
+        print("Not possible")
+        return False
+
+    memo = {}
+    path = []
+
+    def dfs(x, y):
+        if (x, y) in memo:
+            return False
+
+        memo[(x, y)] = True
+        path.append((x, y))
+
+        if x == d or y == d:
+            print("Steps:")
+            for i, state in enumerate(path):
+                print(f"Step {i}: JugA={state[0]}, JugB={state[1]}")
+            return True
+
+        if dfs(m, y):
+            return True
+
+        if dfs(x, n):
+            return True
+
+        if dfs(0, y):
+            return True
+
+        if dfs(x, 0):
+            return True
+
+        transfer = min(x, n - y)
+        if dfs(x - transfer, y + transfer):
+            return True
+
+        transfer = min(y, m - x)
+        if dfs(x + transfer, y - transfer):
+            return True
+
+        path.pop()
+        return False
+
+    if not dfs(0, 0):
+        print("Not possible")
+        return False
+
+    return True
+
+
+water_jug_memo(3, 5, 4)

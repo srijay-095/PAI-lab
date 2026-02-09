@@ -1,0 +1,57 @@
+from math import gcd
+from collections import deque
+
+def water_jug_bfs(m, n, d):
+    if d > max(m, n) or d % gcd(m, n) != 0:
+        print("Not possible")
+        return False
+
+    visited = set()
+    parent = {}
+
+    q = deque()
+    start = (0, 0)
+    q.append(start)
+    visited.add(start)
+    parent[start] = None
+
+    while q:
+        x, y = q.popleft()
+
+        if x == d or y == d:
+            path = []
+            cur = (x, y)
+            while cur is not None:
+                path.append(cur)
+                cur = parent[cur]
+            path.reverse()
+
+            print("Steps:")
+            for i, state in enumerate(path):
+                print(f"Step {i}: JugA={state[0]}, JugB={state[1]}")
+            return True
+
+        next_states = []
+
+        next_states.append((m, y))
+        next_states.append((x, n))
+        next_states.append((0, y))
+        next_states.append((x, 0))
+
+        transfer = min(x, n - y)
+        next_states.append((x - transfer, y + transfer))
+
+        transfer = min(y, m - x)
+        next_states.append((x + transfer, y - transfer))
+
+        for state in next_states:
+            if state not in visited:
+                visited.add(state)
+                parent[state] = (x, y)
+                q.append(state)
+
+    print("Not possible")
+    return False
+
+
+water_jug_bfs(3, 5, 4)
